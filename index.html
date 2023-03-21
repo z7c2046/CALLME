@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@next"></script>
+    <style>
+        :root {
+            --informationBoxWidth: 120px;
+            --informationBoxMarginLeft: 20px;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background-color: #fff;
+        }
+
+        .inforBox {
+            display: grid;
+            grid-template-columns: 1fr;
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+            width: 100vw;
+
+        }
+
+        .inforBox .profile {
+            display: grid;
+            align-items: center;
+            justify-items: center;
+            height: 30vh;
+            padding: 20px 0;
+        }
+
+        .inforBox .profile img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+        }
+
+        .inforBox .profile a {
+            font-size: 2em;
+        }
+
+        .inforBox .information {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-gap: 20px;
+            height: 58vh;
+            align-content: first baseline;
+            padding: 20px 20px;
+            background-color: #f7f7f8;
+        }
+
+        .inforBox .information div {
+            display: grid;
+            justify-items: center;
+            align-content: center;
+        }
+
+        .inforBox .information div img:active {
+            filter: brightness(70%);
+        }
+
+        .inforBox .information div a {
+            text-decoration: none;
+            color: black;
+            font-size: 1.1em;
+        }
+
+        .inforBox .information div .logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        @media(max-width:400px) {
+            .inforBox .profile {
+                height: 25vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="inforBox" class="inforBox">
+        <div class="profile">
+            <img v-bind:src="profile.logoUrl" alt="">
+            <h1>{{profile.name}}</h1>
+        </div>
+
+        <div class="information">
+            <template v-for="key in Object.keys(information)">
+                <div :id="key" :class="key" @click="gotoLink(information[key].jumpLink, information[key].weixinID)">
+                    <img :src="information[key].logoUrl" class="logo">
+                    <a :href="information[key].jumpLink">{{information[key].name}}</a>
+                </div>
+            </template>
+        </div>
+    </div>
+
+
+    <script>
+        const data = Vue.createApp({
+            data() {
+                return {
+                    profile: {
+                        logoUrl: "resource/images/profile.JPG",
+                        background: "resource/images/background.png",
+                        name: "余显钊"
+                    },
+                    information: {
+                        contact: {
+                            logoUrl: "resource/images/contact.png",
+                            jumpLink: "resource/vCard.vcf",
+                            name: "Contact"
+                        }, douyin: {
+                            logoUrl: "resource/images/douyin.png",
+                            jumpLink: "snssdk1128://user/profile/MS4wLjABAAAAN89kWFLRmk3I_Mb7nVqWH6rmdIY3uIWy97dWKM2BGRk",
+                            name: "抖音"
+                        }, weixin: {
+                            logoUrl: "resource/images/weixin.png",
+                            jumpLink: "weixin://",
+                            weixinID: "z7c2046",
+                            name: "微信"
+                        }, alipay: {
+                            logoUrl: "resource/images/aliipay.png",
+                            jumpLink: "https://qr.alipay.com/fkx17809tcnw9empvbvtre1?t=1679290456870",
+                            name: "支付宝"
+                        }
+                    }
+                }
+            },
+            methods: {
+                gotoLink(link, weixinID) {
+                    if (link.startsWith("weixin://")) {
+                        navigator.clipboard.writeText(weixinID)
+                            .then(() => {
+                                console.log(`Copied '${weixinID}' to clipboard`);
+                                window.location.href = link;
+                            })
+                            .catch((error) => {
+                                console.error(`Failed to copy '${weixinID}' to clipboard:`, error);
+                            });
+                    } else {
+                        window.location.href = link;
+                    }
+                }
+            }
+        }).mount("#inforBox")
+    </script>
+</body>
+
+</html>
