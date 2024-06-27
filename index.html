@@ -28,9 +28,7 @@
             grid-template-columns: 1fr;
             justify-content: center;
             align-items: center;
-            /* height: 100vh; */
             width: 100vw;
-
         }
 
         .inforBox .profile {
@@ -98,15 +96,14 @@
         </div>
 
         <div class="information">
-            <template v-for="key in Object.keys(information)">
-                <div :id="key" :class="key" @click="gotoLink(information[key].jumpLink, information[key].weixinID)">
-                    <img :src="information[key].logoUrl" class="logo">
-                    <a :href="information[key].jumpLink">{{information[key].name}}</a>
+            <template v-for="(info, key) in information" :key="key">
+                <div :id="key" :class="key" @click="gotoLink(info.jumpLink, info.weixinID)">
+                    <img :src="info.logoUrl" class="logo">
+                    <a :href="info.jumpLink">{{info.name}}</a>
                 </div>
             </template>
         </div>
     </div>
-
 
     <script>
         const data = Vue.createApp({
@@ -114,7 +111,6 @@
                 return {
                     profile: {
                         logoUrl: "resource/images/profile.JPG",
-                        background: "resource/images/background.png",
                         name: "余显钊"
                     },
                     information: {
@@ -122,23 +118,28 @@
                             logoUrl: "resource/images/contact.png",
                             jumpLink: "resource/vCard.vcf",
                             name: "Contact"
-                        }, douyin: {
+                        },
+                        douyin: {
                             logoUrl: "resource/images/douyin.png",
                             jumpLink: "https://v.douyin.com/i6MAfCUG/",
                             name: "抖音"
-                        }, weixin: {
+                        },
+                        weixin: {
                             logoUrl: "resource/images/weixin.png",
                             jumpLink: "weixin://",
                             weixinID: "z7c2046",
                             name: "微信"
-                        }, alipay: {
-                            logoUrl: "resource/images/aliipay.png",
+                        },
+                        alipay: {
+                            logoUrl: "resource/images/alipay.png",
                             jumpLink: "https://qr.alipay.com/fkx17809tcnw9empvbvtre1?t=1679290456870",
                             name: "支付宝"
-                        }, mail: {
+                        },
+                        mail: {
                             logoUrl: "resource/images/mail.svg",
-                            jumpLink: "mailto: yamasaki2046@outlook.com",
+                            jumpLink: "mailto:yamasaki2046@outlook.com",
                             name: "邮箱"
+                        }
                     }
                 }
             },
