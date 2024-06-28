@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Box Demo</title>
+    <style>
+        :root {
+            --informationBoxWidth: 120px;
+            --informationBoxMarginLeft: 20px;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background-color: #fff;
+            font-family: "PingFang SC", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+        }
+
+        .inforBox {
+            display: grid;
+            grid-template-columns: 1fr;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+        }
+
+        .inforBox .profile {
+            display: grid;
+            align-items: center;
+            justify-items: center;
+            height: 25vh;
+            padding: 20px 0;
+        }
+
+        .inforBox .profile img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+        }
+
+        .inforBox .profile a {
+            font-size: 2em;
+        }
+
+        .inforBox .information {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-gap: 20px;
+            height: 58vh;
+            align-content: first baseline;
+            padding: 20px 20px;
+            background-color: #f7f7f8;
+        }
+
+        .inforBox .information div {
+            display: grid;
+            justify-items: center;
+            align-content: center;
+        }
+
+        .inforBox .information div img:active {
+            filter: brightness(70%);
+        }
+
+        .inforBox .information div a {
+            text-decoration: none;
+            color: black;
+            font-size: 1.1em;
+        }
+
+        .inforBox .information div .logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        @media(max-width:400px) {
+            .inforBox .profile {
+                height: 25vh;
+            }
+        }
+
+        /* Apple style message box */
+        .message-box {
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            width: 300px;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 9999;
+        }
+
+        .message-box h1 {
+            font-size: 18px;
+            margin: 0;
+            color: #333;
+        }
+
+        .message-box p {
+            font-size: 14px;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .message-box button {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-box button:hover {
+            background-color: #005fcb;
+        }
+
+        .message-box.show {
+            display: block;
+        }
+    </style>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="inforBox">
+            <div class="profile">
+                <img :src="profile.logoUrl" alt="Profile Image">
+                <h1>{{ profile.name }}</h1>
+            </div>
+
+            <div class="information">
+                <div v-for="(info, key) in information" :key="key" @click="handleClick(info.jumpLink, info.weixinID)">
+                    <img :src="info.logoUrl" class="logo" alt="Info Image">
+                    <a href="#" @click.prevent>{{ info.name }}</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="messageBox" class="message-box" v-bind:class="{ show: showMessage }">
+            <h1>提示</h1>
+            <p> 由于微信限制，此次点击只能<b> 复制 </b>微信ID然后请打开<b>微信🔍</b>粘贴即可 </p>
+            <button @click="confirmLink">OK</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const app = Vue.createApp({
+                data() {
+                    return {
+                        profile: {
+                            logoUrl: "resource/images/profile.JPG",
+                            name: "余显钊"
+                        },
+                        information: {
+                            contact: {
+                                logoUrl: "resource/images/contact.png",
+                                jumpLink: "resource/vCard.vcf",
+                                name: "Contact"
+                            },
+                            douyin: {
+                                logoUrl: "resource/images/douyin.png",
+                                jumpLink: "snssdk1128://user/profile/3433102967572972",
+                                name: "抖音"
+                            },
+                            weixin: {
+                                logoUrl: "resource/images/weixin.png",
+                                jumpLink: "weixin://",
+                                weixinID: "z7c2046",
+                                name: "微信"
+                            },
+                            alipay: {
+                                logoUrl: "resource/images/alipay.png",
+                                jumpLink: "https://qr.alipay.com/fkx17809tcnw9empvbvtre1?t=1679290456870",
+                                name: "支付宝"
+                            },
+                            mail: {
+                                logoUrl: "resource/images/mail.svg",
+                                jumpLink: "mailto:yamasaki2046@outlook.com",
+                                name: "邮箱"
+                            }
+                        },
+                        showMessage: false,
+                        weixinLink: ""
+                    };
+                },
+                methods: {
+                    handleClick(link, weixinID) {
+                        if (link.startsWith("weixin://")) {
+                            navigator.clipboard.writeText(weixinID)
+                                .then(() => {
+                                    this.weixinLink = link;
+                                    this.showMessage = true;
+                                })
+                                .catch((error) => {
+                                    console.error(`Failed to copy '${weixinID}' to clipboard:`, error);
+                                });
+                        } else {
+                            window.location.href = link;
+                        }
+                    },
+                    confirmLink() {
+                        this.showMessage = false;
+                        window.location.href = this.weixinLink;
+                    }
+                }
+            });
+
+            app.mount("#app");
+        });
+    </script>
+</body>
+
+</html>
